@@ -3,7 +3,19 @@ const User = require('../models/User');
 
 
 exports.signup = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { fullName, email, password } = req.body;
+  console.log(req.body);
+  if (!fullName || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+  }
 
   try {
 
@@ -17,7 +29,7 @@ exports.signup = async (req, res) => {
 
 
     const newUser = new User({
-      username,
+      fullName,
       email,
       password: hashedPassword,
     });
@@ -47,7 +59,7 @@ exports.login = async (req, res) => {
     }
 
 
-    res.status(200).json({ message: 'Login successful', user: { id: user._id, username: user.username } });
+    res.status(200).json({ message: 'Login successful', user: { id: user._id, fullName: user.fullName } });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in', error });
   }
