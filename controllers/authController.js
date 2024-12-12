@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-
+const path = require('path');
 
 exports.signup = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -35,7 +35,9 @@ exports.signup = async (req, res) => {
     });
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    router.get('/login', (req, res) => {
+      res.sendFile(path.join(__dirname, '..', 'views', 'login.html'));
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error registering user', error });
   }
